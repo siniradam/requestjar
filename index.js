@@ -75,12 +75,20 @@ function startServer(isSecure) {
         500
       );
 
-      console.log("A new client subscribed.", connectionId);
+      console.log(
+        `A new client subscribed, ${connectionId}. Total clients: (${
+          Object.keys(viewers).length
+        })`
+      );
 
       //Cleanup.
       req.on("close", function () {
         delete viewers[connectionId];
-        console.log("Viewer left.", connectionId);
+        console.log(
+          `Viewer ${connectionId} left. Total clients: (${
+            Object.keys(viewers).length
+          })`
+        );
       });
     });
 

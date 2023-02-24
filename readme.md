@@ -24,6 +24,12 @@ npm run tips
 - Highlighted JSON payloads.
 
 
+### TODO
+- Work on UI, make it better. This is one just quick and dirty.
+- Add a connection status somewhere on the page fixed position.
+- May be add a JS Console?
+- Favicon.ico thing annoys me, maybe add it?
+- Push fanciness limits, add colored console logs.
 
 ### Warning
 - Use at your own risk, no security measures taken to make it safe.
