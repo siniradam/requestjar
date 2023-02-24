@@ -67,7 +67,11 @@ function startServer(isSecure) {
 
       //Send an initial message.
       setTimeout(
-        () => sendEvent(response, `{message:"Hello",time:"${Date.now()}"}`),
+        () =>
+          sendEvent(
+            response,
+            `{message:"Hello", time:"${Date.now()}", clientId:"${connectionId}"}`
+          ),
         500
       );
 
