@@ -75,7 +75,7 @@ function startServer(isSecure) {
         500
       );
 
-      console.log("New viewer.", connectionId);
+      console.log("A new client subscribed.", connectionId);
 
       //Cleanup.
       req.on("close", function () {
