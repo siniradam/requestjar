@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.pem
+logs/
+
+# macOS
+.DS_Store
+node_modules/

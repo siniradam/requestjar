@@ -1,0 +1,19 @@
+{
+  "name": "postbin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/start.js",
+    "serve": "node index",
+    "serves": "node index --secure",
+    "help": "node index --help",
+    "tips": "node index --tips"
+  },
+  "keywords": [],
+  "author": "Koray K <koray@ohshift.io>",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
