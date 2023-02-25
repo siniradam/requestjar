@@ -53,71 +53,10 @@ function startServer(isSecure) {
   if (isOk) {
     app.use(express.json()); // for parsing application/json
     app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+    app.use(setHeaders);
 
-    //Live Data
-    app.get("/live/:connectionId", (req, response) => {
-      response.setHeader("Connection", "keep-alive");
-      response.setHeader("Content-Type", "text/event-stream");
-      response.setHeader("Cache-Control", "no-cache");
-
-      let connectionId = req.params.connectionId;
-
-      //Store Viewer Client references.
-      viewers[connectionId] = response;
-
-      //Send an initial message.
-      setTimeout(
-        () =>
-          sendEvent(
-            response,
-            `{message:"Hello", time:"${Date.now()}", clientId:"${connectionId}"}`
-          ),
-        500
-      );
-
-      console.log(
-        `A new client subscribed, ${connectionId}. Total clients: (${
-          Object.keys(viewers).length
-        })`
-      );
-
-      //Cleanup.
-      req.on("close", function () {
-        delete viewers[connectionId];
-        console.log(
-          `Viewer ${connectionId} left. Total clients: (${
-            Object.keys(viewers).length
-          })`
-        );
-      });
-    });
-
-    //Handle Requests
-    app.all("*", function (req, res) {
-      const { originalUrl, body, query, headers } = req;
-
-      //Display requested URL
-      console.log(originalUrl);
-
-      //
-      let date = new Date().toISOString();
-
-      let requestedData = { originalUrl, query, body, headers };
-      //
-      if (Object.keys(body).length || Object.keys(query).length) {
-        //Store in a file
-        storeLog(date.replaceAll(":", "-"), requestedData);
-
-        //Broadcast to watchers.
-        publishEvent(requestedData);
-
-        //Return a response to the requesting party/
-        res.json({ received: date });
-        //
-      } else {
-        res.send(homepage);
-      }
-    });
+    app.get("/live/:connectionId", handleViewers); //Live Data
+    app.all("*", handleRequests); //Handle Requests
 
     if (isSecure) {
       const key = fs.readFileSync("./certs/key.pem");
@@ -134,6 +73,69 @@ function startServer(isSecure) {
         console.log("Running", httpServerConfig.port);
       });
     }
+  }
+
+  function handleRequests(req, res) {
+    const { originalUrl, body, query, headers } = req;
+
+    //Display requested URL
+    console.log(originalUrl);
+
+    //
+    let date = new Date().toISOString();
+
+    let requestedData = { originalUrl, query, body, headers };
+    //
+    if (Object.keys(body).length || Object.keys(query).length) {
+      //Store in a file
+      storeLog(date.replaceAll(":", "-"), requestedData);
+
+      //Broadcast to watchers.
+      publishEvent(requestedData);
+
+      //Return a response to the requesting party/
+      res.json({ received: date });
+      //
+    } else {
+      res.send(homepage);
+    }
+  }
+
+  function handleViewers(req, response) {
+    response.setHeader("Connection", "keep-alive");
+    response.setHeader("Content-Type", "text/event-stream");
+    response.setHeader("Cache-Control", "no-cache");
+
+    let connectionId = req.params.connectionId;
+
+    //Store Viewer Client references.
+    viewers[connectionId] = response;
+
+    //Send an initial message.
+    setTimeout(
+      () =>
+        sendEvent(
+          response,
+          `{message:"Hello", time:"${Date.now()}", clientId:"${connectionId}"}`
+        ),
+      500
+    );
+
+    console.log(
+      `A new client subscribed, ${connectionId}. Total clients: (${
+        Object.keys(viewers).length
+      })`
+    );
+
+    //Cleanup.
+    req.on("close", function () {
+      delete viewers[connectionId];
+      console.log(
+        `Viewer ${connectionId} left. Total clients: (${
+          Object.keys(viewers).length
+        })`
+      );
+    });
   }
 }
 
@@ -161,4 +163,17 @@ function storeLog(filename, request) {
     JSON.stringify(request, null, 2),
     () => {}
   );
+}
+
+function setHeaders(req, res, next) {
+  res.setHeader("Powered", "Yep!");
+  res.setHeader("X-nananana", "Batman!");
+  res.setHeader("X-Powered-By", "RequestJar");
+  res.setHeader(
+    "X-hacker",
+    "This is a tool for testing requests, please don't hack."
+  );
+  res.setHeader("X-GitHub-Repo", "https://github.com/siniradam/requestjar");
+
+  next();
 }

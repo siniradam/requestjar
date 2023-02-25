@@ -30,6 +30,11 @@ npm run tips
 - May be add a JS Console?
 - Favicon.ico thing annoys me, maybe add it?
 - Push fanciness limits, add colored console logs.
+- Clear button.
+- Config system: Ports, certificates, header check etc.
+- Helmet?
+- Cors?
+- Headers + Payload side by side view.
 
 ### Warning
 - Use at your own risk, no security measures taken to make it safe.
