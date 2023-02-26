@@ -146,25 +146,3 @@ exports.afraidPing = (key) => {
 };
 
 const { js, css } = require("./page");
-
-exports.homepage = `<!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Test for demonstrating how to use the Server-Sent Events"
-    />
-    <title>POST Bin</title>
-    ${css}
-    <link rel="stylesheet"
-      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/agate.min.css">
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-  </head>
-  <body>
-    <div id="logs"></div>
-    ${js}
-  </body>
-</html>
-`;
