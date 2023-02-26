@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 const { parseArgs } = require("node:util");
 
 //Do Not Edit =>
@@ -10,7 +11,7 @@ const { values, tokens } = parseArgs(launchParams);
 //Server Stuff.
 const express = require("express");
 const https = require("https");
-const { logArray, displayHelp, displayTips, homepage } = require("./src/utils");
+const { logArray, displayHelp, displayTips } = require("./src/utils");
 
 const httpServerConfig = {
   port: 8080,
@@ -97,7 +98,7 @@ function startServer(isSecure) {
       res.json({ received: date });
       //
     } else {
-      res.send(homepage);
+      res.sendFile(path.join(__dirname, "/src/www/index.html"));
     }
   }
 
@@ -111,15 +112,14 @@ function startServer(isSecure) {
     //Store Viewer Client references.
     viewers[connectionId] = response;
 
+    const helloMessage = {
+      message: "Hello!",
+      time: Date.now(),
+      clientId: connectionId,
+    };
+
     //Send an initial message.
-    setTimeout(
-      () =>
-        sendEvent(
-          response,
-          `{message:"Hello", time:"${Date.now()}", clientId:"${connectionId}"}`
-        ),
-      500
-    );
+    setTimeout(() => sendEvent(response, JSON.stringify(helloMessage)), 500);
 
     console.log(
       `A new client subscribed, ${connectionId}. Total clients: (${

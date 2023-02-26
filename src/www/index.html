@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Test for demonstrating how to use the Server-Sent Events"
+    />
+    <title>POST Bin</title>
+    <style>
+      html,
+      body {
+        background: #202124;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .holder {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .logs {
+        flex-grow: 1;
+        max-height: calc(100vh - 26px);
+        overflow: auto;
+      }
+      .statusbar {
+        height: 26px;
+        background-color: #292a2d;
+        border-top: #4a4c50;
+        border-top-width: 1px;
+        border-top-style: solid;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 0 4px;
+      }
+      .statusbar > div:nth-child(2) {
+        flex-grow: 1;
+      }
+
+      .log {
+        display: flex;
+        gap: 4px;
+        margin: 4px;
+        padding: 4px;
+        border: 1px solid #564b5352;
+      }
+      .log > pre:first-child {
+        flex-grow: 1;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/agate.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="holder">
+      <div class="logs" id="logs"></div>
+      <div class="statusbar">
+        <div id="connectionStatus">Disconnected</div>
+        <div id="eventStatus"></div>
+        <div id="clientId"></div>
+      </div>
+    </div>
+    <script>
+      const cStatus = document.getElementById("connectionStatus");
+      const eStatus = document.getElementById("eventStatus");
+      const clientId = document.getElementById("clientId");
+
+      const logs = document.getElementById("logs");
+      const key = (Math.random() + 1).toString(36).substring(7);
+      const usersEventSource = new EventSource("/live/" + key);
+
+      //Add message
+      const addMessage = (payload) => {
+        const log = document.createElement("div");
+        log.classList.add("log");
+
+        const payloadPre = document.createElement("pre");
+        const payloadCode = document.createElement("code");
+
+        const headersPre = document.createElement("pre");
+        const headersCode = document.createElement("code");
+
+        let message = "";
+        let additional = "";
+
+        try {
+          const o = JSON.parse(payload);
+          console.log({ o });
+          if (o && typeof o === "object") {
+            //
+            if (o.originalUrl) {
+              //Payload DATA
+              message = JSON.stringify(
+                { query: o.query, body: o.body },
+                null,
+                2
+              );
+
+              //Additional Data
+              additional = JSON.stringify(
+                { originalUrl: o.originalUrl, headers: o.headers },
+                null,
+                2
+              );
+              //
+            } else {
+              if (o.clientId) {
+                clientId.innerHTML = `Client Id: ${o.clientId}`;
+              }
+              message = JSON.stringify(o, null, 2);
+            }
+          }
+        } catch (e) {
+          console.log(e);
+        }
+
+        payloadCode.innerHTML = message;
+        payloadPre.appendChild(payloadCode);
+        log.append(payloadPre);
+
+        headersCode.innerHTML = additional;
+        headersPre.appendChild(headersCode);
+        log.append(headersPre);
+
+        hljs.highlightElement(payloadCode);
+        hljs.highlightElement(headersCode);
+
+        logs.prepend(log);
+      };
+
+      //Connection state, data events.
+      usersEventSource.addEventListener("open", () => {
+        cStatus.innerText = "Connected";
+      });
+
+      usersEventSource.addEventListener("error", (error) => {
+        cStatus.innerText = "Disconnected";
+        eStatus.innerHTML = `Trying to reconnect.`;
+
+        console.error(error);
+      });
+
+      usersEventSource.addEventListener("update", (event) => {
+        addMessage(event.data);
+        eStatus.innerHTML = `Received: ${new Date().toISOString()}`;
+      });
+    </script>
+  </body>
+</html>

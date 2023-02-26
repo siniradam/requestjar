@@ -25,16 +25,24 @@ npm run tips
 
 
 ### TODO
-- Work on UI, make it better. This is one just quick and dirty.
-- Add a connection status somewhere on the page fixed position.
-- May be add a JS Console?
+- ~~Work on UI, make it better. This is one just quick and dirty.~~
+- ~~Add a connection status somewhere on the page fixed position.~~
+- ~~May be add a JS Console?~~ Nah. I've changed my mind.
 - Favicon.ico thing annoys me, maybe add it?
 - Push fanciness limits, add colored console logs.
 - Clear button.
 - Config system: Ports, certificates, header check etc.
 - Helmet?
 - Cors?
-- Headers + Payload side by side view.
+- ~~Headers + Payload side by side view.~~
+- Column widths maybe be fixed by size.
+
+### Updates
+#### 1.1.0
+ - Fanciness increased
+ - Side by side data (Payload / Other stuff)
+ - Added status bar, displays connection status and client ID.
+
 
 ### Warning
 - Use at your own risk, no security measures taken to make it safe.
