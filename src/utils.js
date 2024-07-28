@@ -146,3 +146,22 @@ exports.afraidPing = (key) => {
 };
 
 const { js, css } = require("./page");
+
+function randKey() {
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  );
+}
+
+function cookieMonster(req, res, next) {
+  const cookie = req.cookies["visitor-id"];
+  const randomKey = randKey();
+  if (cookie === undefined) {
+    res.cookie("visitor-id", randomKey, { maxAge: 900000, httpOnly: true });
+  }
+
+  next();
+}
+
+exports.cookieMonster = cookieMonster;
