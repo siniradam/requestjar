@@ -92,12 +92,19 @@ function startServer(isSecure) {
       aborted,
     } = req;
 
+    const visitorIdCookie = req.cookies["visitor-id"];
+
     //Display requested URL
-    console.log({ method });
-
     let date = new Date().toISOString();
-
-    let requestedData = { originalUrl, query, body, headers, method, aborted };
+    let requestedData = {
+      originalUrl,
+      query,
+      body,
+      headers,
+      method,
+      aborted,
+      visitorIdCookie,
+    };
     //
     if (Object.keys(body).length || Object.keys(query).length || method == "HEAD") {
       if (method == "HEAD") {
